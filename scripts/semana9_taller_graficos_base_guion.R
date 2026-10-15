@@ -2,7 +2,7 @@
 # GUION DE CLASE — Semana 9 · Taller: Gráficos básicos con R base
 # Fundamentos de Programación para Análisis Económico · UdeC-EAN
 #
-# Nombre: [TU NOMBRE]      Fecha: [FECHA]
+# Nombre: Camila Bravo Figueroa      Fecha: 15-10-2026
 #
 # CÓMO USAR: corre cada línea con Cmd/Ctrl+Enter y MIRA el panel Plots
 #   después de cada paso. El gráfico se construye de a poco.
@@ -55,6 +55,9 @@ library(dplyr)          # solo para ORGANIZAR los datos; los gráficos son base
 azul <- "#223c6a"       # la paleta del curso, en HEX (Semana 9, sesión 1)
 oro  <- "#e69b0a"
 gris <- "grey75"
+lila <- "#E3C4FF"
+rosa <- "#FFABE3"
+celeste <- "#B8D9FF"
 
 casen   <- read.csv("data/raw/casen_reducido.csv")
 salario <- read.csv("data/raw/salario_minimo_chile.csv")
@@ -68,8 +71,8 @@ ene     <- read.csv2("data/raw/ene-2026-06-mjj.csv")       # 2-3 segundos
 ## PASO 1 · Organizar --------------------------------------------------------
 # ✏️ COMPLETA: quita las filas sin ingreso y pasa el ingreso a miles de pesos.
 casen1 <- casen |>
-  filter(!is.na(____)) |>
-  mutate(ingreso_mil = ingreso / ____)
+  filter(!is.na(ingreso)) |>
+  mutate(ingreso_mil = ingreso / 1000)
 
 nrow(casen1)
 # ✅ Deberías ver: 55 (las 60 personas menos los 5 NA).
@@ -84,9 +87,9 @@ plot(casen1$educ, casen1$ingreso_mil)
 # (a) Títulos y ejes con unidades.
 # ✏️ COMPLETA
 plot(casen1$educ, casen1$ingreso_mil,
-     main = "____",
+     main = "Relación entre ingreso y educación",
      xlab = "Años de educación",
-     ylab = "____")
+     ylab = "Ingreso mensuales en miles")
 
 # (b) Forma, color y tamaño de los puntos.
 #     pch = 19 es un círculo relleno; pch = 1 es un círculo vacío.
@@ -94,7 +97,7 @@ plot(casen1$educ, casen1$ingreso_mil,
 plot(casen1$educ, casen1$ingreso_mil,
      main = "A más educación, más ingreso",
      xlab = "Años de educación", ylab = "Ingreso mensual (miles de $)",
-     pch = ____, col = ____, cex = 1.3, las = 1)
+     pch = 19, col = lila, cex = 1, las = 1)
 
 # 🔵 CORRE Y OBSERVA: todas las formas disponibles, del 0 al 25.
 plot(0:25, rep(1, 26), pch = 0:25, cex = 2, ylim = c(0.5, 1.5),
@@ -106,10 +109,10 @@ axis(1, at = 0:25)
 plot(casen1$educ, casen1$ingreso_mil,
      main = "A más educación, más ingreso",
      xlab = "Años de educación", ylab = "Ingreso mensual (miles de $)",
-     pch = 19, col = azul, cex = 1.3, las = 1)
+     pch = 19, col = lila, cex = 1, las = 1)
 modelo <- lm(ingreso_mil ~ educ, data = casen1)
 # ✏️ COMPLETA: dibuja la recta del modelo en dorado, con grosor 3.
-abline(____, col = oro, lwd = ____)
+abline(modelo, col = oro, lwd = 3)
 
 coef(modelo)
 # ✅ Deberías ver: pendiente 42.08 -> cada año de educación se asocia con
@@ -118,23 +121,28 @@ coef(modelo)
 # (d) Color según una variable: un color por género.
 #     En R base el color se construye a mano: un vector con un color por fila.
 # ✏️ COMPLETA: dorado para F, azul para M.
-colores <- ifelse(casen1$genero == "F", ____, ____)
+colores <- ifelse(casen1$genero == "F", rosa, celeste)
 table(colores)
 # ✅ Deberías ver: 27 puntos dorados (F) y 28 azules (M).
 
 plot(casen1$educ, casen1$ingreso_mil,
      main = "A más educación, más ingreso",
      xlab = "Años de educación", ylab = "Ingreso mensual (miles de $)",
-     pch = 19, col = colores, cex = 1.3, las = 1)
+     pch = 19, col = colores, cex = 1, las = 1)
 abline(modelo, col = "grey40", lwd = 2, lty = 2)
 # ✏️ COMPLETA: la leyenda, arriba a la izquierda.
-legend("____", legend = c("Mujeres", "Hombres"),
-       col = c(oro, azul), pch = 19, bty = "n")
+legend("topleft", legend = c("Mujeres", "Hombres"),
+       col = c(rosa, celeste), pch = 19, bty = "n")
 
 # (e) Etiquetar UN punto: la persona de mayor ingreso.
 top <- casen1 |> slice_max(ingreso_mil, n = 1)
-text(top$educ, top$ingreso_mil, labels = "mayor ingreso", pos = ____, cex = 0.9)
+text(top$educ, top$ingreso_mil, labels = "Mayor ingreso", pos = 2, cex = 0.9)
 # pos: 1 abajo · 2 izquierda · 3 arriba · 4 derecha
+bottom <- casen1 |> slice_min(ingreso_mil, n = 1)
+text(bottom$educ, bottom$ingreso_mil, labels = "Menor ingreso", pos = 4, cex = 0.9)
+
+text(11, 689, labels = "Elegido", pos = 2, cex = 0.9)
+
 
 ## PASO 4 · Checklist --------------------------------------------------------
 # [x] título = hallazgo   [x] ejes con unidades   [x] color con función
@@ -166,7 +174,7 @@ hist(ocupados$habituales)
 
 # ✏️ COMPLETA: limpia los dos centinelas (Semana 6).
 ocupados <- ocupados |>
-  mutate(horas = na_if(na_if(habituales, ____), ____))
+  mutate(horas = na_if(na_if(habituales, 888), 999))
 summary(ocupados$horas)
 # ✅ Deberías ver: máximo 126 y 111 NA (los centinelas, ahora NA).
 
@@ -175,6 +183,7 @@ hist(ocupados$horas)
 ## PASO 3 · Corregir ---------------------------------------------------------
 # (a) Más barras: breaks decide cuántos intervalos. Prueba 10, 30 y 60.
 hist(ocupados$horas, breaks = 10)
+hist(ocupados$horas, breaks = 30)
 hist(ocupados$horas, breaks = 60)
 
 # 🔮 PREDICE: ¿qué se ve con 60 que no se veía con 10? ____
@@ -182,19 +191,19 @@ hist(ocupados$horas, breaks = 60)
 # (b) Color, borde, títulos.
 # ✏️ COMPLETA
 hist(ocupados$horas, breaks = 60,
-     col = ____, border = "white",
-     main = "____",
+     col = lila, border = "white",
+     main = "Cantidad de horas trabajadas en Chile",
      xlab = "Horas habituales por semana", ylab = "Personas encuestadas", las = 1)
 
 # (c) Líneas de referencia: la media y la mediana (stats).
 # ✏️ COMPLETA: v = vertical. La media en dorado; la mediana punteada.
 media   <- mean(ocupados$horas, na.rm = TRUE)
-mediana <- ____(ocupados$horas, na.rm = TRUE)
+mediana <- median(ocupados$horas, na.rm = TRUE)
 abline(v = media,   col = oro,     lwd = 3)
-abline(v = mediana, col = "black", lwd = 2, lty = ____)
+abline(v = mediana, col = oro, lwd = 3, lty = 2)
 legend("topright", bty = "n",
        legend = c(paste("Media:", round(media, 1)), paste("Mediana:", mediana)),
-       col = c(oro, "black"), lwd = c(3, 2), lty = c(1, 2))
+       col = c(oro, oro), lwd = c(3, 3), lty = c(1, 2))
 
 c(media = media, mediana = mediana)
 # ✅ Deberías ver: media 38.1, mediana 42. La media es MENOR: la cola izquierda
@@ -202,10 +211,10 @@ c(media = media, mediana = mediana)
 
 # (d) La versión suavizada: density() (stats) dibujada con lines().
 #     freq = FALSE pone el eje Y en densidad para que calcen las escalas.
-hist(ocupados$horas, breaks = 60, freq = FALSE, col = gris, border = "white",
+hist(ocupados$horas, breaks = 60, freq = FALSE, col = lila, border = "white",
      main = "Horas habituales: histograma y densidad",
      xlab = "Horas habituales por semana", ylab = "Densidad", las = 1)
-lines(density(ocupados$horas, na.rm = TRUE), col = azul, lwd = 3)
+lines(density(ocupados$horas, na.rm = TRUE), col = oro, lwd = 2, lty = 2)
 
 # 🔵 CORRE Y OBSERVA: el pico más alto, ¿en qué hora está?
 sort(table(ocupados$horas), decreasing = TRUE)[1:3]
@@ -231,7 +240,7 @@ regiones <- c("Tarapacá", "Antofagasta", "Atacama", "Coquimbo", "Valparaíso",
 inf_region <- ocupados |>
   mutate(informal = ocup_form == 2, region_txt = regiones[region]) |>
   group_by(region_txt) |>
-  summarise(tasa = 100 * weighted.mean(informal, ____))
+  summarise(tasa = 100 * weighted.mean(informal, fact_cal))
 
 ## PASO 2 · Graficar lo mínimo -----------------------------------------------
 # barplot() necesita un VECTOR de alturas; names.arg pone los nombres.
@@ -242,17 +251,17 @@ barplot(inf_region$tasa, names.arg = inf_region$region_txt)
 ## PASO 3 · Corregir ---------------------------------------------------------
 # (a) ORDENAR: el orden alfabético no dice nada (S9).
 # ✏️ COMPLETA: de menor a mayor (arriba quedará la mayor al girarlo).
-inf_ord <- inf_region |> arrange(____)
+inf_ord <- inf_region |> arrange(tasa)
 
 # (b) Horizontal y nombres legibles. Los nombres largos necesitan margen
 #     izquierdo: par(mar = c(abajo, izquierda, arriba, derecha)).
 par(mar = c(4, 10, 3, 2))
 barplot(inf_ord$tasa, names.arg = inf_ord$region_txt,
-        horiz = ____, las = 1)
+        horiz = T, las = 1)
 
 # (c) Un color con función: gris para todas, dorado para Ñuble.
 # ✏️ COMPLETA
-col_barras <- ifelse(inf_ord$region_txt == "____", oro, gris)
+col_barras <- ifelse(inf_ord$region_txt == "Ñuble", oro, gris)
 barplot(inf_ord$tasa, names.arg = inf_ord$region_txt, horiz = TRUE, las = 1,
         col = col_barras, border = NA, xlim = c(0, 40),
         main = "Ñuble, segunda región más informal",
@@ -266,7 +275,7 @@ pos <- barplot(inf_ord$tasa, names.arg = inf_ord$region_txt, horiz = TRUE,
                xlab = "% de ocupados informales")
 nacional <- 100 * weighted.mean(ocupados$ocup_form == 2, ocupados$fact_cal)
 # ✏️ COMPLETA: línea vertical en el promedio nacional y el valor de cada barra.
-abline(v = ____, lty = 2)
+abline(v = nacional, lty = 2)
 text(inf_ord$tasa, pos, labels = round(inf_ord$tasa, 1), pos = 4, cex = 0.8)
 par(mar = c(5, 4, 4, 2))                     # restaurar los márgenes
 
@@ -287,11 +296,11 @@ tail(inf_ord, 2)
 ## PASO 1 · Organizar --------------------------------------------------------
 # ✏️ COMPLETA: el salario real en pesos de 2010 (Semana 2).
 salario <- salario |>
-  mutate(real = salario_minimo / ____ * 100)
+  mutate(real = salario_minimo / ipc * 100)
 
 ## PASO 2 · Graficar lo mínimo -----------------------------------------------
 # type = "l" une los puntos con una línea (type = "b": línea + puntos).
-plot(salario$anio, salario$salario_minimo, type = "l")
+plot(salario$anio, salario$salario_minimo, type = "b")
 
 ## PASO 3 · Corregir ---------------------------------------------------------
 # (a) La segunda serie se AGREGA con lines(). Pero ojo:
@@ -303,15 +312,15 @@ lines(salario$anio, salario$real)
 #     que quepan las dos series.
 # ✏️ COMPLETA: desde 0 hasta el máximo nominal.
 plot(salario$anio, salario$salario_minimo, type = "l",
-     ylim = c(0, ____(salario$salario_minimo)),
+     ylim = c(min(salario$real), max(salario$salario_minimo)),
      lwd = 3, col = azul, las = 1,
      main = "El mínimo nominal subió 135 %; el real, 44 %",
      xlab = "", ylab = "Pesos")
-lines(salario$anio, salario$real, lwd = 3, col = oro, lty = ____)
+lines(salario$anio, salario$real, lwd = 3, col = oro, lty = 2)
 
 # (c) Etiquetas directas en vez de leyenda (S9: codificación redundante).
-text(2025, max(salario$salario_minimo), "Nominal", pos = 3, col = azul, font = 2)
-text(2025, max(salario$real), "Real (pesos de 2010)", pos = 3, col = oro, font = 2)
+text(2025, max(salario$salario_minimo), "Nominal", pos = 2, col = azul, font = 2)
+text(2025, max(salario$real), "Real (pesos de 2010)", pos = 2, col = oro, font = 2)
 
 # (d) Los ejes en formato chileno: format() con separador de miles.
 plot(salario$anio, salario$salario_minimo, type = "l",
