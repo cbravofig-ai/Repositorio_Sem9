@@ -2,7 +2,7 @@
 # GUION DE CLASE — Semana 9 · Sesión 1: Teoría de la Visualización
 # Fundamentos de Programación para Análisis Económico · UdeC-EAN
 #
-# Nombre: [TU NOMBRE]      Fecha: [FECHA]
+# Nombre: Camila Ignacia Bravo Figueroa     Fecha: 13-10-2026
 #
 # CÓMO USAR: corre cada línea con Cmd/Ctrl+Enter.
 #   🔵 CORRE Y OBSERVA · ✏️ COMPLETA (____) · 🔮 PREDICE · 🟢 TU TURNO
@@ -62,18 +62,18 @@ table(datasaurus_dozen$dataset)
 # ✏️ COMPLETA: media, desviación estándar y correlación de cada conjunto
 #    (group_by + summarise, Semana 5; cor(), Semana 7).
 datasaurus_dozen |>
-  group_by(____) |>
+  group_by(dataset) |>
   summarise(media_x = mean(x),
             media_y = mean(y),
             desv_x  = sd(x),
-            desv_y  = ____(y),
-            correl  = cor(x, ____)) |>
+            desv_y  = sd(y),
+            correl  = cor(x, y)) |>
   mutate(across(where(is.numeric), \(z) round(z, 2)))
 
 # ✅ Deberías ver: 13 filas casi IDÉNTICAS: media_x 54.3 · media_y 47.8 ·
 #    desv_x 16.8 · desv_y 26.9 · correlación entre -0.06 y -0.07.
 
-# 🔮 PREDICE: si las 13 tablas son iguales, ¿cómo serán los 13 gráficos? ____
+# 🔮 PREDICE: si las 13 tablas son iguales, ¿cómo serán los 13 gráficos? iguales
 
 # 👀 SOLO MIRA (la gramática la vemos en la S10)
 ggplot(datasaurus_dozen, aes(x, y)) +
@@ -92,8 +92,17 @@ anscombe
 
 # ✏️ COMPLETA: la correlación y la recta de regresión (Semana 8) del
 #    conjunto I. Luego cambia los números y repite para II, III y IV.
-cor(anscombe$x1, anscombe$____)
-coef(lm(y1 ~ ____, data = anscombe))
+cor(anscombe$x1, anscombe$y1)
+coef(lm(y1 ~ x1, data = anscombe))
+
+cor(anscombe$x2, anscombe$y2)
+coef(lm(y2 ~ x2, data = anscombe))
+
+cor(anscombe$x3, anscombe$y3)
+coef(lm(y3 ~ x3, data = anscombe))
+
+cor(anscombe$x4, anscombe$y4)
+coef(lm(y4 ~ x4, data = anscombe))
 
 # ✅ Deberías ver: correlación 0.816 y recta y = 3.00 + 0.50 x. En los cuatro
 #    conjuntos la correlación es 0.816 (o 0.817) y la recta es la misma.
@@ -115,7 +124,7 @@ ggplot(ans, aes(x, y)) +
 
 # 🔮 PREDICE: en el conjunto III, una sola observación se sale de la recta.
 #    ¿Cuál es? Encuéntrala con dplyr (pista: el y3 más alto).
-anscombe |> filter(y3 == ____(y3))
+anscombe |> filter(y3 == max(y3))
 
 # 💡 La misma regresión para cuatro realidades: I lineal con ruido, II una
 #    curva, III una recta perfecta desviada por un punto, IV ninguna relación
@@ -147,7 +156,7 @@ col2rgb("#223c6a")          # el azul institucional del curso
 strtoi("3c", base = 16)     # R hace la cuenta por ti
 
 # ✏️ COMPLETA: traduce el dorado del curso, "#e69b0a", a RGB.
-col2rgb("____")
+col2rgb("#e69b0a")
 
 # ✅ Deberías ver: red 230 · green 155 · blue 10 -> mucho rojo y verde, casi
 #    nada de azul: por eso es dorado.
@@ -164,7 +173,12 @@ adjustcolor("#223c6a", alpha.f = 0.5)
 #    elige un color que te guste, copia su HEX y tradúcelo a RGB con col2rgb().
 #    ¿Qué componente domina?
 
+col2rgb("#D100D1")
 
+#       [,1]
+# red    209
+# green    0
+# blue   209
 
 # -----------------------------------------------------------------------------
 # BLOQUE D (cont.) — Las paletas que conviene conocer
@@ -194,7 +208,7 @@ swatchplot(viridisLite::viridis(7))
 swatchplot(
   "viridis"   = viridisLite::viridis(7),
   "Okabe-Ito" = unname(palette.colors(palette = "Okabe-Ito"))[2:8],
-  "rainbow"   = ____(7)
+  "rainbow"   = rainbow(7)
 )
 
 
@@ -219,7 +233,7 @@ swatchplot(
   "rainbow"         = rainbow(7),
   "rainbow, deutan" = deutan(rainbow(7)),
   "viridis"         = viridisLite::viridis(7),
-  "viridis, deutan" = ____(viridisLite::viridis(7))
+  "viridis, deutan" = deutan(viridisLite::viridis(7))
 )
 
 # 💡 viridis conserva el ORDEN (de oscuro a claro) aunque se pierda el tono.
@@ -235,12 +249,12 @@ salario <- read.csv("data/raw/salario_minimo_chile.csv")
 
 # ✏️ COMPLETA: el salario real, como en la Semana 2.
 salario <- salario |>
-  mutate(real = salario_minimo / ____ * 100)
+  mutate(real = salario_minimo / ipc * 100)
 
 # ✏️ COMPLETA: ¿cuánto subió cada uno entre 2014 y 2025, en %?
 #    (primera fila = 2014, última = 2025)
 100 * (salario$salario_minimo[12] / salario$salario_minimo[1] - 1)
-100 * (salario$____[12] / salario$____[1] - 1)
+100 * (salario$real[12] / salario$real[1] - 1)
 
 # ✅ Deberías ver: nominal +135,1 % · real +43,9 %.
 
