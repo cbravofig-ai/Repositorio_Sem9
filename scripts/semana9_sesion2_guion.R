@@ -2,7 +2,7 @@
 # GUION DE CLASE — Semana 9 · Sesión 2: Análisis de Gráficos Reales
 # Fundamentos de Programación para Análisis Económico · UdeC-EAN
 #
-# Nombre: [TU NOMBRE]      Fecha: [FECHA]
+# Nombre: Camila Bravo Figueroa      Fecha: 13-10-2026
 #
 # CÓMO USAR: corre cada línea con Cmd/Ctrl+Enter.
 #   🔵 CORRE Y OBSERVA · ✏️ COMPLETA (____) · 🔮 PREDICE · 🟢 TU TURNO
@@ -46,18 +46,18 @@ salario <- read.csv("data/raw/salario_minimo_chile.csv") |>
   mutate(real = salario_minimo / ipc * 100)      # pesos de 2010 (Semana 2)
 
 # ✏️ COMPLETA: quédate con 2021 a 2025.
-ult <- salario |> filter(anio >= ____)
+ult <- salario |> filter(anio >= 2021)
 ult |> select(anio, real)
 
 # ✏️ COMPLETA: ¿cuánto subió el mínimo real entre 2021 y 2025, en %?
-100 * (ult$real[5] / ult$real[____] - 1)
+100 * (ult$real[5] / ult$real[1] - 1)
 
 # ✅ Deberías ver: 20,2 % (de $237.157 a $285.175, pesos de 2010).
 
 # 🔮 PREDICE: si el eje Y empieza en 230.000 en vez de 0, ¿cuántas veces más
-#    alta se verá la barra de 2025 que la de 2021? Tu predicción: ____
+#    alta se verá la barra de 2025 que la de 2021? Tu predicción: 4
 # ✏️ COMPLETA: lo que el ojo ve es la parte de la barra SOBRE el corte.
-(ult$real[5] - 230000) / (ult$real[1] - ____)
+(ult$real[5] - 230000) / (ult$real[1] - 230000)
 
 # ✅ Deberías ver: 7,71 -> la barra de 2025 parece casi OCHO veces la de
 #    2021, cuando en realidad es 1,2 veces (20 % más).
@@ -85,14 +85,14 @@ mal + bien
 # -----------------------------------------------------------------------------
 # ✏️ COMPLETA: variación del mínimo real entre 2020 y 2021.
 r20 <- salario |> filter(anio == 2020) |> pull(real)
-r21 <- salario |> filter(anio == ____) |> pull(real)
+r21 <- salario |> filter(anio == 2021) |> pull(real)
 100 * (r21 / r20 - 1)
 
 # ✅ Deberías ver: -1,29 %. El dato es CIERTO: en 2021 la inflación le ganó
 #    al reajuste.
 
 # ✏️ COMPLETA: y la variación en toda la serie, 2014-2025.
-100 * (salario$real[12] / salario$real[____] - 1)
+100 * (salario$real[12] / salario$real[1] - 1)
 
 # ✅ Deberías ver: +43,9 %. Un titular "¡Cae el mínimo real!" con solo
 #    2020-2021 dice algo verdadero que engaña. La defensa: pedir la serie
@@ -113,12 +113,12 @@ sin_luz <- data.frame(
               2948, 2930, 2248, 2139, 2064, 2005, 1552, 1243, 865, 691))
 
 # ✏️ COMPLETA: ¿cuántos hogares suma la torta?
-sum(sin_luz$____)
+sum(sin_luz$hogares)
 
 # 🔮 PREDICE: mirando SOLO la torta de la slide, ¿Lampa tiene el doble que
-#    Maipú, un 40 % más o lo mismo? ____
+#    Maipú, un 40 % más o lo mismo? Un poco más.
 # ✏️ COMPLETA: calcula la razón.
-14555 / ____
+14555 / 90989
 
 # ✅ Deberías ver: 90.989 hogares en total; Lampa tiene 1,40 veces lo de
 #    Maipú (40 % más). En una torta, los ángulos de 16 % y 11 % casi no se
@@ -126,7 +126,7 @@ sum(sin_luz$____)
 
 # 🟢 TU TURNO: haz el rediseño. Completa para obtener barras ORDENADAS.
 #    Copia el gráfico de abajo y cambia lo que haga falta.
-ggplot(sin_luz, aes(hogares, reorder(comuna, ____))) +
+ggplot(sin_luz, aes(hogares, reorder(comuna, hogares))) +
   geom_col(fill = "#223c6a") +
   scale_x_continuous(labels = miles) +
   labs(title = "Lampa, Maipú y Colina: casi 4 de cada 10 hogares sin luz",
@@ -138,7 +138,7 @@ ggplot(sin_luz, aes(hogares, reorder(comuna, ____))) +
 
 ## Caso 2 · Elección presidencial de Venezuela, 2013 --------------------------
 # ✏️ COMPLETA: ¿cuál fue la diferencia real, en puntos porcentuales?
-50.66 - ____
+50.66 - 49.07
 
 # ✏️ COMPLETA: en barras honestas (desde 0), ¿qué tan alta sería la segunda
 #    barra respecto de la primera?
@@ -147,7 +147,6 @@ ggplot(sin_luz, aes(hogares, reorder(comuna, ____))) +
 # ✅ Deberías ver: 1,59 puntos; la segunda barra mediría el 96,9 % de la
 #    primera. En la imagen, un cilindro es alto y el otro está aplastado:
 #    eje truncado + 3D. Para una diferencia así, los dos números bastan.
-
 
 # -----------------------------------------------------------------------------
 # BLOQUE C — El rediseño con datos reales: informalidad por región (ENE)
@@ -167,12 +166,12 @@ inf_region <- ene |>
          mujer      = sexo == 2,
          region_txt = regiones[region]) |>
   group_by(region_txt) |>
-  summarise(total   = 100 * weighted.mean(informal, ____),
+  summarise(total   = 100 * weighted.mean(informal, sexo),
             hombres = 100 * weighted.mean(informal[!mujer], fact_cal[!mujer]),
             mujeres = 100 * weighted.mean(informal[mujer],  fact_cal[mujer]))
 
 # ✏️ COMPLETA: ordena de mayor a menor. ¿En qué lugar queda Ñuble?
-inf_region |> arrange(____(total)) |> head(5)
+inf_region |> arrange(desc(total)) |> head(5)
 
 # ✅ Deberías ver: La Araucanía 35,0 · Ñuble 34,5 · Los Ríos 33,2 ·
 #    Arica y Parinacota 32,0 · Maule 30,6. Ñuble, segunda.
@@ -197,13 +196,13 @@ ggplot(inf_region, aes(hombres, mujeres)) +
   labs(x = "Informalidad hombres (%)", y = "Informalidad mujeres (%)")
 
 # 🔮 PREDICE: ¿qué pasa si cambias geom_text_repel() por geom_text() en el
-#    gráfico anterior? Pruébalo. ____
+#    gráfico anterior? Pruébalo. Se sobreponen las letras.
 
 # ✏️ COMPLETA: ¿en qué regiones la informalidad de las mujeres supera a la
 #    de los hombres por más de 8 puntos?
 inf_region |>
   mutate(brecha = mujeres - hombres) |>
-  filter(brecha > ____) |>
+  filter(brecha > hombres-mujeres) |>
   arrange(desc(brecha))
 
 # ✅ Deberías ver: Tarapacá (11,7) y Atacama (11,1): el norte minero, donde
