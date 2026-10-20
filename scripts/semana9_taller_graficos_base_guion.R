@@ -153,7 +153,21 @@ mtext("Fuente: CASEN (muestra del curso)", side = 1, line = 4, adj = 0,
 # 🟢 TU TURNO: haz el scatter de EDAD contra ingreso (en miles), con su recta.
 #    ¿La pendiente es mayor o menor que la de educación? (Semana 8: casi plana)
 
+# Para justar el modelo de regresión lineal (ingreso_mil en función de edad)
+modelo_edad <- lm(ingreso_mil ~ edad, data = casen1)
 
+# Para dibujar el scatter plot
+plot(casen1$edad, casen1$ingreso_mil,
+     main = "Relación entre edad e ingreso",
+     xlab = "Edad (años)", 
+     ylab = "Ingreso mensual (miles de $)",
+     pch = 19, col = azul, cex = 1, las = 1)
+
+# Para superponer la recta de regresión
+abline(modelo_edad, col = oro, lwd = 3)
+
+# Para inspeccionar los coeficientes y comparar la pendiente
+coef(modelo_edad)
 
 # =============================================================================
 # GRÁFICO 2 — HISTOGRAMA: horas trabajadas (ENE)
@@ -362,12 +376,12 @@ boxplot(ingreso_mil ~ sector, data = casen1)
 # (a) Ordenar los sectores por su MEDIANA con reorder() (stats).
 # ✏️ COMPLETA
 casen1 <- casen1 |>
-  mutate(sector_ord = reorder(sector, ingreso_mil, FUN = ____))
+  mutate(sector_ord = reorder(sector, ingreso_mil, FUN = median))
 levels(casen1$sector_ord)
 
 # (b) Horizontal, color, títulos.
 par(mar = c(5, 8, 4, 2))
-boxplot(ingreso_mil ~ sector_ord, data = casen1, horizontal = ____, las = 1,
+boxplot(ingreso_mil ~ sector_ord, data = casen1, horizontal = TRUE, las = 1,
         col = adjustcolor(azul, alpha.f = 0.3), border = azul,
         main = "Educación: el sector con la mediana más alta",
         xlab = "Ingreso mensual (miles de $)", ylab = "")
@@ -376,7 +390,7 @@ boxplot(ingreso_mil ~ sector_ord, data = casen1, horizontal = ____, las = 1,
 #     cada persona encima de su caja; method = "jitter" las separa un poco.
 # ✏️ COMPLETA: add = TRUE para pintar ENCIMA y no en un gráfico nuevo.
 stripchart(ingreso_mil ~ sector_ord, data = casen1, method = "jitter",
-           pch = 19, col = oro, add = ____, vertical = FALSE)
+           pch = 19, col = oro, add = TRUE, vertical = FALSE)
 par(mar = c(5, 4, 4, 2))
 
 # 🔵 CORRE Y OBSERVA: las medianas que dibujó la caja
@@ -396,8 +410,8 @@ casen1 |> group_by(sector) |> summarise(n = n(), mediana = median(ingreso_mil)) 
 dir.create("output/figuras", recursive = TRUE, showWarnings = FALSE)
 # ✏️ COMPLETA: 300 dpi (Semana 10, T4).
 png("output/figuras/taller_s9.png", width = 12, height = 5, units = "in",
-    res = ____)
-par(mfrow = c(1, ____))
+    res = 300)
+par(mfrow = c(1, 2))
 plot(casen1$educ, casen1$ingreso_mil, pch = 19, col = colores, las = 1,
      main = "A más educación, más ingreso",
      xlab = "Años de educación", ylab = "Ingreso (miles de $)")
